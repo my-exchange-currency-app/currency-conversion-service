@@ -1,6 +1,7 @@
 package com.demo.skyros.service;
 
 import com.demo.skyros.proxy.CurrencyExchangeProxy;
+import com.demo.skyros.proxy.CurrencyMailProxy;
 import com.demo.skyros.vo.CurrencyExchangeVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ public class CurrencyConversionService {
     private RestTemplate restTemplate;
     @Autowired
     private CurrencyExchangeProxy currencyExchangeProxy;
+    @Autowired
+    private CurrencyMailProxy currencyMailProxy;
 
     public CurrencyExchangeVO convertCurrency(String from, String to, BigDecimal quantity) {
         //CurrencyExchangeVO currencyExchangeVO = exchangeCurrency(from, to);
@@ -24,6 +27,7 @@ public class CurrencyConversionService {
         BigDecimal totalCalculatedAmount = conversionMultiple.multiply(quantity);
         currencyExchangeVO.setTotalCalculatedAmount(totalCalculatedAmount);
         currencyExchangeVO.setQuantity(quantity);
+        sendMail(currencyExchangeVO);
         return currencyExchangeVO;
     }
 
@@ -33,5 +37,13 @@ public class CurrencyConversionService {
         uriVariables.put("to", to);
         String uri = "http://localhost:8000/currency-exchange/from/{from}/to/{to}";
         return restTemplate.getForObject(uri, CurrencyExchangeVO.class, uriVariables);
+    }
+
+    private void sendMail(CurrencyExchangeVO currencyExchangeVO) {
+        try {
+            currencyMailProxy.sendMail(currencyExchangeVO);
+        } finally {
+            System.out.println("sendMail done");
+        }
     }
 }
