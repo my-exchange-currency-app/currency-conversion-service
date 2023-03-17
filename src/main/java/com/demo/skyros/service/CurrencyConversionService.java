@@ -51,6 +51,8 @@ public class CurrencyConversionService {
             if (sendMailPerRequest) {
                 currencyMailProxy.sendMail(currencyExchangeVO);
             }
+        } catch (Exception ex) {
+            logger.error("sendMail failed with [" + ex.getMessage() + "]");
         } finally {
             logger.info("sendMail done");
         }
