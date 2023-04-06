@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "currency-mail-service", url = "http://localhost:9999")
 public interface CurrencyMailProxy {
 
-    @PostMapping("sendMail")
-    CurrencyExchangeVO sendMail(@RequestBody CurrencyExchangeVO currencyExchangeVO);
+    @PostMapping("transaction")
+    void sendTransactionMail(@RequestBody CurrencyExchangeVO currencyExchangeVO);
+
 }

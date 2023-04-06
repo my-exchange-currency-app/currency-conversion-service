@@ -1,13 +1,15 @@
 package com.demo.skyros.proxy;
 
+import com.demo.skyros.vo.AppResponse;
 import com.demo.skyros.vo.CurrencyExchangeVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "currency-exchange-service"/*, url = "http://localhost:8000"*/)
+@FeignClient(name = "currency-exchange-service")
 public interface CurrencyExchangeProxy {
 
-    @GetMapping("currency-exchange/from/{from}/to/{to}")
-    CurrencyExchangeVO exchangeCurrency(@PathVariable String from, @PathVariable String to);
+    @PostMapping("currency-exchange")
+    AppResponse exchangeCurrency(@RequestBody CurrencyExchangeVO currencyExchangeVO);
 }

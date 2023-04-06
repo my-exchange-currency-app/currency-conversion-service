@@ -77,7 +77,7 @@
         </dependency>
         <dependency>
             <groupId>com.demo.skyros</groupId>
-            <artifactId>client-request</artifactId>
+            <artifactId>client-request-logging</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
