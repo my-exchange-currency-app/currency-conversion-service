@@ -1,14 +1,12 @@
 package com.demo.skyros.service;
 
 import com.demo.skyros.proxy.CurrencyExchangeProxy;
-import com.demo.skyros.proxy.CurrencyMailProxy;
 import com.demo.skyros.vo.AppResponse;
 import com.demo.skyros.vo.CurrencyExchangeVO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -26,10 +24,6 @@ public class CurrencyConversionService {
     private RestTemplate restTemplate;
     @Autowired
     private CurrencyExchangeProxy currencyExchangeProxy;
-    @Autowired
-    private CurrencyMailProxy currencyMailProxy;
-    @Value("${send.mail.per.request}")
-    private boolean sendMailPerRequest;
 
     public AppResponse convertCurrency(CurrencyExchangeVO vo) {
         BigDecimal quantity = vo.getQuantity();
@@ -41,7 +35,6 @@ public class CurrencyConversionService {
             BigDecimal totalCalculatedAmount = conversionMultiple.multiply(quantity);
             currencyExchangeVO.setTotalCalculatedAmount(totalCalculatedAmount);
             currencyExchangeVO.setQuantity(quantity);
-            sendMail(currencyExchangeVO);
         } else {
             return appResponse;
         }
@@ -64,16 +57,4 @@ public class CurrencyConversionService {
         return restTemplate.getForObject(uri, CurrencyExchangeVO.class, uriVariables);
     }
 
-    private void sendMail(CurrencyExchangeVO currencyExchangeVO) {
-        logger.info("sendMailPerRequest = [" + sendMailPerRequest + "]");
-        try {
-            if (sendMailPerRequest) {
-                currencyMailProxy.sendTransactionMail(currencyExchangeVO);
-            }
-        } catch (Exception ex) {
-            logger.error("sendMail failed with [" + ex.getMessage() + "]");
-        } finally {
-            logger.info("sendMail done");
-        }
-    }
 }
