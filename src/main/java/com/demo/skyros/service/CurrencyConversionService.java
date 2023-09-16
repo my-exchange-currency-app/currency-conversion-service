@@ -1,5 +1,6 @@
 package com.demo.skyros.service;
 
+import com.demo.skyros.exception.InvalidLimitException;
 import com.demo.skyros.proxy.CurrencyExchangeProxy;
 import com.demo.skyros.vo.AppResponse;
 import com.demo.skyros.vo.CurrencyExchangeVO;
@@ -24,9 +25,15 @@ public class CurrencyConversionService {
     private RestTemplate restTemplate;
     @Autowired
     private CurrencyExchangeProxy currencyExchangeProxy;
+    @Autowired
+    private LimitServiceConfiguration configuration;
 
     public AppResponse convertCurrency(CurrencyExchangeVO vo) {
         BigDecimal quantity = vo.getQuantity();
+        if (configuration.getMaximum() != 0 && configuration.getMinimum() != 0 &&
+                (quantity.compareTo(BigDecimal.valueOf(configuration.getMaximum())) > 0 || quantity.compareTo(BigDecimal.valueOf(configuration.getMinimum())) < 0)) {
+            throw new InvalidLimitException("invalid limit");
+        }
         AppResponse appResponse = currencyExchangeProxy.exchangeCurrency(vo);
         CurrencyExchangeVO currencyExchangeVO = new CurrencyExchangeVO();
         if (HttpStatus.OK.equals(appResponse.getHttpStatus())) {
