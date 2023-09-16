@@ -4,6 +4,7 @@ import com.demo.skyros.exception.InvalidLimitException;
 import com.demo.skyros.proxy.CurrencyExchangeProxy;
 import com.demo.skyros.vo.AppResponse;
 import com.demo.skyros.vo.CurrencyExchangeVO;
+import com.demo.skyros.vo.Limit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,12 @@ public class CurrencyConversionService {
         uriVariables.put("to", to);
         String uri = "http://localhost:8000/currency-exchange/from/{from}/to/{to}";
         return restTemplate.getForObject(uri, CurrencyExchangeVO.class, uriVariables);
+    }
+
+    public AppResponse getLimit() {
+        Limit limit = new Limit(configuration.getMinimum(), configuration.getMaximum());
+        return prepareAppResponse(limit, null);
+
     }
 
 }
